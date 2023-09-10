@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 import pyperclip
+from datetime import datetime
 
 
 # Load your Excel data 
@@ -118,8 +119,7 @@ def create_membership_bar_chart(df):
     return membership_counts
 
 def main():
-
-    menu = ["Main Menu", "Roster Search", "Buttons","About"]
+    menu = ["Main Menu", "Roster Search", "Buttons", "About"]
     choice = st.sidebar.selectbox("Menu", menu)
 
     selected_membership = st.sidebar.multiselect(
@@ -144,7 +144,7 @@ def main():
         # Calculate revenue (replace 'Your_Column_Name_Here' with the actual column name)
         revenue = df_selection['Payment_Per_Month'].sum()
 
-        left_column, middle_column, right_column = st.columns(3)
+        left_column, middle_column, right_column, right_column_dante = st.columns(4)
         with left_column:
             st.subheader(":100: Roster Count")
             st.subheader(str(total_members))
@@ -154,6 +154,18 @@ def main():
         with right_column:
             st.subheader(":money_mouth_face: Monthly Revenue")
             st.subheader(revenue)
+        # Display the 5 most recent upcoming usernames with renewal dates in the right column
+        with right_column_dante:
+            st.subheader(":pencil: Renewals To Come")
+            today = pd.Timestamp(datetime.today().date())  # Convert to Pandas Timestamp
+            future_profiles = df_selection[df_selection['Renewal'] > today].sort_values(by='Renewal').head(5)
+            
+            if not future_profiles.empty:
+                for index, row in future_profiles.iterrows():
+                    st.write(f"{row['Username']} - {format_date(row['Renewal'])}")
+            else:
+                st.write("No upcoming renewals.")
+            
 
         st.markdown("---")
 
@@ -199,35 +211,35 @@ Directions to schedule your next WIN Elite Session
 
         if st.button("GBB Hitting Lesson Link"):
             link = """
-            https://calendly.com/austin-mcnicholas/win-reality-gbb-hitting-lesson 
+https://calendly.com/austin-mcnicholas/win-reality-gbb-hitting-lesson 
             """
             pyperclip.copy(link)
             st.success("Link Has Been Copied")
 
         if st.button("Slow and Early Load"):
             load = """
-            https://www.youtube.com/watch?v=NFjoMkBFrB0 
+https://www.youtube.com/watch?v=NFjoMkBFrB0 
             """
             pyperclip.copy(load)
             st.success("Link Has Been Copied")
 
         if st.button("Personal Survey"):
             personal_survey = """
-            https://docs.google.com/forms/d/e/1FAIpQLSf-ARh2xeArN2CiWgCcxg23PWfnOp7X4jo7aWYReANTT9HpBw/viewform 
+https://docs.google.com/forms/d/e/1FAIpQLSf-ARh2xeArN2CiWgCcxg23PWfnOp7X4jo7aWYReANTT9HpBw/viewform 
             """
             pyperclip.copy(personal_survey)
             st.success("Survey Has Been Copied")
 
         if st.button("GBB Survey"):
             gbb_survey = """
-            https://docs.google.com/forms/d/e/1FAIpQLSfMyUE9U1VQuNI9DJ359yLJ91QTq8u5Zzhz4OhYtjTGBti-bQ/viewform?usp=sf_link 
+https://docs.google.com/forms/d/e/1FAIpQLSfMyUE9U1VQuNI9DJ359yLJ91QTq8u5Zzhz4OhYtjTGBti-bQ/viewform?usp=sf_link 
             """
             pyperclip.copy(gbb_survey)
             st.success("Survey Has Been Copied")
 
         if st.button("Palm Up"):
             palm = """
-            https://www.youtube.com/shorts/PHtXbYYqOJ0
+https://www.youtube.com/shorts/PHtXbYYqOJ0
             """
             pyperclip.copy(palm)
             st.success("Palm Up Video Has Been Copied")
@@ -241,6 +253,8 @@ https://calendly.com/austin-mcnicholas/win-reality-gbb-hitting-lesson
 - Coach Austin
 Former Professional Baseball Player, University of Texas
             """
+            pyperclip.copy(text)
+            st.success("Copied Text")
 
             
     else:
