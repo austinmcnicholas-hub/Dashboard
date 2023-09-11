@@ -1,34 +1,28 @@
-# CoachDashboard
-Dashboard for Customer Data such as Membership/Renewal/Revenue 
+This code creates a user-friendly dashboard for managing customer data related to membership, renewal, and revenue. Here's a simplified breakdown:
 
-It imports necessary libraries such as Streamlit (streamlit), Pandas (pandas), Altair (altair), Pyperclip (pyperclip), and the datetime module.
+Importing Libraries: The script imports necessary libraries like Streamlit (for creating the web app), Pandas (for data manipulation), Altair (for data visualization), Pyperclip (for clipboard operations), and the datetime module.
 
-It loads data from an Excel file named 'Elite.xlsx' into a Pandas DataFrame (df) using pd.read_excel. The data is read from the sheet named 'Coach Austin' and the first 127 rows (excluding any skipped rows) are loaded into the DataFrame.
+Loading Data: It reads data from an Excel file ('Elite.xlsx') into a Pandas DataFrame ('df'). The data is extracted from the 'Coach Austin' sheet, and the first 127 rows are loaded.
 
-It defines a placeholder variable selected_username and profile_picture to store selected user data and profile pictures (not used in the provided code).
+Variables: It defines variables 'selected_username' and 'profile_picture' (not used in this code) to store user data.
 
-It initializes a session state to store user notes using st.session_state.
+Session State: Initializes session state to store user notes using 'st.session_state'.
 
-It defines a function calculate_renewal_date that calculates the renewal date based on various conditions such as membership type, subscription type, and current renewal date.
+Date Calculation Function: Defines 'calculate_renewal_date' to compute renewal dates based on membership and subscription types.
 
-It defines a function format_date to format dates as 'mm/dd/yyyy'.
+Date Formatting Function: Defines 'format_date' to format dates as 'mm/dd/yyyy'.
 
-It defines a function roster_search to search and display user profiles based on Name, Username, and Email input.
+User Profile Search: Defines 'roster_search' to search and display user profiles based on Name, Username, and Email.
 
-It defines a function create_membership_bar_chart that counts the number of members for each membership type and returns this data for plotting.
+Data Visualization Function: Defines 'create_membership_bar_chart' to count and return the number of members by membership type for charting.
 
-The main function is the entry point for the Streamlit app and is executed when the script is run.
+Main Function: This is the entry point for the Streamlit app. It provides a sidebar menu with options for the user.
 
-It provides a sidebar menu with options: "Main Menu," "Roster Search," "Buttons," and "About."
+Menu Options:
 
-In the "Main Menu" option, it displays information such as the roster count, monthly revenue, coach rating, upcoming renewals, past renewals, and a bar chart showing the distribution of members by membership type.
-
-In the "Roster Search" option, it allows users to search for profiles based on Name, Username, and Email, and displays selected profile information along with renewal and start dates.
-
-In the "Buttons" option, it provides buttons with various functionalities, including copying instructions, links, and text snippets to the clipboard.
-
-In the "About" option, it displays the loaded DataFrame as a table.
-
-The if __name__ == '__main__': block ensures that the main() function is executed when the script is run directly.
-
-Overall, this code creates a Streamlit web app with a user-friendly interface for Coach Austin to manage user profiles, view important statistics, and access useful resources.
+"Main Menu": Displays key statistics like roster count, monthly revenue, coach rating, upcoming and past renewals, and a chart showing membership distribution.
+"Roster Search": Allows users to search for profiles based on various criteria and displays selected profiles.
+"Buttons": Provides buttons for copying instructions, links, and text snippets to the clipboard.
+"About": Displays the loaded DataFrame as a table.
+Script Execution: The code ensures that the 'main()' function is executed when the script is run directly.
+In summary, this code creates a Streamlit web application that serves as a dashboard for Coach Austin to manage customer data, view important metrics, and access useful resources in an organized and user-friendly manner.
