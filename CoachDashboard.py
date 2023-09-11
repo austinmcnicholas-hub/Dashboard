@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import altair as alt
-import pyperclip
 from datetime import datetime
 
 # Load your Excel data 
@@ -143,7 +142,7 @@ def create_membership_bar_chart(df):
     return membership_counts
 
 def main():
-    menu = ["Main Menu", "Roster Search", "Buttons", "About"]
+    menu = ["Main Menu", "Roster Search", "About"]
     choice = st.sidebar.selectbox("Menu", menu)
 
     selected_membership = st.sidebar.multiselect(
@@ -226,74 +225,6 @@ def main():
     elif choice == "Roster Search":
         roster_search(df)  # Call the roster_search function
 
-    elif choice == "Buttons":
-        # Create a Button for Elite Directions to Schedule
-        if st.button("WIN Reality Scheduling"):
-            instructions = """
-            
-https://dashboard.winreality.com/app/win-elite/schedule
-            
-Directions to schedule your next WIN Elite Session
-            1. Visit the WIN Dashboard and login to your account.
-            2. Select your specific WIN profile you want to schedule sessions with in the top right.
-            3. Navigate to the “Elite Coaches Sessions” under the WIN Elite section of your dashboard.
-            4. Here you can see what session you are on, how many sessions you have left before your renewal date, and when your next session is.
-            5. Schedule by clicking “Schedule Elite Session”, finding a time that works with you, and then clicking ‘confirm’.
-            6. You can only schedule one session at a time.
-            7. If you need to reschedule, click cancel and repeat steps 2-5.
-            8. You can always schedule, cancel or reschedule by reaching out to me!
-           
- Let me know if you have any difficulties running through this, and I’ll be happy to assist.
-            """
-            pyperclip.copy(instructions)
-            st.success("Instructions copied to clipboard!")
-
-        if st.button("GBB Hitting Lesson Link"):
-            link = """
-https://calendly.com/austin-mcnicholas/win-reality-gbb-hitting-lesson 
-            """
-            pyperclip.copy(link)
-            st.success("Link Has Been Copied")
-
-        if st.button("Slow and Early Load"):
-            load = """
-https://www.youtube.com/watch?v=NFjoMkBFrB0 
-            """
-            pyperclip.copy(load)
-            st.success("Link Has Been Copied")
-
-        if st.button("Personal Survey"):
-            personal_survey = """
-https://docs.google.com/forms/d/e/1FAIpQLSf-ARh2xeArN2CiWgCcxg23PWfnOp7X4jo7aWYReANTT9HpBw/viewform 
-            """
-            pyperclip.copy(personal_survey)
-            st.success("Survey Has Been Copied")
-
-        if st.button("GBB Survey"):
-            gbb_survey = """
-https://docs.google.com/forms/d/e/1FAIpQLSfMyUE9U1VQuNI9DJ359yLJ91QTq8u5Zzhz4OhYtjTGBti-bQ/viewform?usp=sf_link 
-            """
-            pyperclip.copy(gbb_survey)
-            st.success("Survey Has Been Copied")
-
-        if st.button("Palm Up"):
-            palm = """
-https://www.youtube.com/shorts/PHtXbYYqOJ0
-            """
-            pyperclip.copy(palm)
-            st.success("Palm Up Video Has Been Copied")
-
-        if st.button("GBB Reminder Text"):
-            text = """
-            Hey its Coach Austin from WIN Reality, just checking in... wanted to let you know the membership that you have chosen also includes 1 on 1 coaching with me! Below is the link to my calendar, if you have any questions shoot me an email or text! 
-
-https://calendly.com/austin-mcnicholas/win-reality-gbb-hitting-lesson
-
-- Coach Austin
-Former Professional Baseball Player, University of Texas
-            """
-            pyperclip.copy(text)
-            st.success("Copied Text")
 
     else:
         st.subheader("About")
