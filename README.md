@@ -1,7 +1,7 @@
 # CoachDashboard
 Dashboard for Customer Data such as Membership/Renewal/Revenue 
 
-This Python script is a Streamlit web application that provides a dashboard for Coach Austin. Let's break down what this code does step by step:
+This Python script is a Streamlit web application that provides a dashboard for Coach Austin. 
 
 It imports necessary libraries such as Streamlit (streamlit), Pandas (pandas), Altair (altair), Pyperclip (pyperclip), and the datetime module.
 
