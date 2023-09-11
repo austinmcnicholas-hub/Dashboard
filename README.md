@@ -12,12 +12,12 @@ To enhance data visualization, the 'create_membership_bar_chart' function counts
 
 The primary functionality is organized into a 'main' function, which serves as the entry point for the Streamlit app. This function presents a sidebar menu with four distinct options:
 
-1. "Main Menu" offers insights into crucial statistics such as roster count, monthly revenue, coach rating, upcoming and past renewals, and a chart depicting membership distribution.
+"Main Menu" offers insights into crucial statistics such as roster count, monthly revenue, coach rating, upcoming and past renewals, and a chart depicting membership distribution.
 
-2. "Roster Search" empowers users to search and display profiles based on various criteria, including Name, Username, and Email.
+"Roster Search" empowers users to search and display profiles based on various criteria, including Name, Username, and Email.
 
-3. "Buttons" provides clickable buttons for copying instructions, links, and text snippets to the clipboard, simplifying access to valuable resources.
+"Buttons" provides clickable buttons for copying instructions, links, and text snippets to the clipboard, simplifying access to valuable resources.
 
-4. "About" furnishes a table view of the loaded DataFrame.
+"About" furnishes a table view of the loaded DataFrame.
 
 In conclusion, this well-structured code creates a streamlined Streamlit web application. It equips users with a user-friendly dashboard to effortlessly manage customer data, gain insights through informative statistics, and access essential resources, ultimately enhancing efficiency and convenience.
