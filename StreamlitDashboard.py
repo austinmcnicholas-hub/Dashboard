@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import altair as alt
+import pyperclip
 from datetime import datetime
 
 # Load your Excel data 
@@ -101,20 +102,29 @@ def roster_search(df):
             selected_username = None
 
     if selected_username:
-        st.subheader(f"Profile: {selected_username}")
-
         # Find the selected user's profile from the DataFrame
         selected_profile = df[df['Username'] == selected_username].iloc[0]
 
+        # Determine the color for the "Profile:" name based on the "Active" value
+        name_color = "green" if selected_profile['Active'] == 'Yes' else "red"
+
+        # Display the "Profile:" name with the determined color
+        st.markdown(f"<h3 style='color:{name_color};'>Profile: {selected_username}</h3>", unsafe_allow_html=True)
+
         # Display the profile information
         st.write(f"**Name:** {selected_profile['Name']}")
-        st.write(f"**Email:** {selected_profile['Email']}")
 
         # Display the membership type
         st.write(f"**Membership Type:** {selected_profile['Membership']}")
         
         # Display the sub_type
         st.write(f"**Sub Type:** {selected_profile['Sub_Type']}")
+
+        st.write(f"**Email:** {selected_profile['Email']}")
+
+        # Additional Markdown sections for selected user's emails
+        st.markdown(f"**Guest Email One:** {selected_profile['Guest_Email_One']}")
+        st.markdown(f"**Guest Email Two:** {selected_profile['Guest_Email_Two']}")
 
         selected_start_date = selected_profile['Start_Date']
         selected_sub_type = selected_profile['Sub_Type']
@@ -134,15 +144,25 @@ def roster_search(df):
         # Update the session state with the user's notes
         st.session_state.user_notes[notes_key] = notes
 
-def create_membership_bar_chart(df):
-    # Count the number of members for each membership type
-    membership_counts = df['Membership'].value_counts().reset_index()
-    membership_counts.columns = ['Membership Type', 'Number of Members']
+        # Add a feature to update data
+        if st.button("Update Data"):
+            # Update the selected user's data with the edited notes
+            df.loc[df['Username'] == selected_username, 'Notes'] = notes
 
-    return membership_counts
+            # Save the updated DataFrame to the Excel file
+            df.to_excel('Elite.xlsx', sheet_name='Coach Austin', index=False, engine='openpyxl')
+
+def create_membership_bar_chart(df):
+    # Count the number of active members for each membership type
+    active_membership_counts = df[df['Active'] == 'Yes']['Membership'].value_counts().reset_index()
+    active_membership_counts.columns = ['Membership Type', 'Number of Members']
+
+    return active_membership_counts
 
 def main():
-    menu = ["Main Menu", "Roster Search", "About"]
+    selected_username = None #Initialize selected_username
+
+    menu = ["Main Menu", "Roster Search", "Buttons", "About"]
     choice = st.sidebar.selectbox("Menu", menu)
 
     selected_membership = st.sidebar.multiselect(
@@ -155,21 +175,24 @@ def main():
         st.subheader(":baseball: Coach Austin Dashboard")
         st.markdown("##")
 
+        # Filter the DataFrame to include only rows where 'Active' is 'Yes'
+        df_main = df[df['Active'] == 'Yes']  # <--- Filter by 'Active' value
+
         # Filter DataFrame based on selected memberships
         df_selection = df[df["Membership"].isin(selected_membership)]
 
         # Calculate total_members
-        total_members = df_selection.shape[0]
+        total_members = df_main.shape[0]  # Use shape[0] to get the number of rows
 
         # Calculate average rating
         average_rating = round(df_selection['Rating'].mean(), 1)
 
-        # Calculate revenue (replace 'Your_Column_Name_Here' with the actual column name)
-        revenue = df_selection['Payment_Per_Month'].sum()
+        # Calculate revenue for selected active users
+        revenue = df_selection[df_selection['Active'] == 'Yes']['Payment_Per_Month'].sum()
 
         left_column2, left_column1, middle_column, right_column1, right_column2 = st.columns(5)
         with left_column2:
-            st.subheader(" Roster Count")
+            st.subheader("Active Roster")
             st.subheader(str(total_members))
 
         with left_column1:
@@ -223,7 +246,189 @@ def main():
         st.altair_chart(chart)
 
     elif choice == "Roster Search":
-        roster_search(df)  # Call the roster_search function
+        st.subheader("Roster Search")
+
+        # NAV Search Form
+        with st.form(key='searchform'):
+            nav1, nav2, nav3 = st.columns([3, 2, 2])
+
+            with nav1:
+                Name = st.text_input("Search Name")
+            with nav2:
+                Username = st.text_input("Search Username")
+            with nav3:
+                Email = st.text_input("Search Email")
+                st.text("Search")
+                submit_search = st.form_submit_button(label='Search')
+
+        if submit_search:
+            # Perform the search based on Name, Username, and Email
+            filtered_df = df[
+                (df['Name'].str.contains(Name, case=False)) &
+                (df['Username'].str.contains(Username, case=False)) &
+                (df['Email'].str.contains(Email, case=False))
+            ]
+
+            if not filtered_df.empty:
+                # Display the filtered roster as a dropdown
+                selected_username = st.selectbox("Select a Username:", filtered_df['Username'].tolist())
+
+            else:
+                st.warning("No matching records found.")
+                selected_username = None
+
+        if selected_username:
+            # Find the selected user's profile from the DataFrame
+            selected_profile = df[df['Username'] == selected_username].iloc[0]
+
+            # Determine the color for the "Profile:" name based on the "Active" value
+            name_color = "green" if selected_profile['Active'] == 'Yes' else "red"
+
+            # Display the "Profile:" name with the determined color
+            st.markdown(f"<h3 style='color:{name_color};'>Profile: {selected_username}</h3>",
+                        unsafe_allow_html=True)
+
+            # Display the profile information
+            st.write(f"**Name:** {selected_profile['Name']}")
+
+            # Display the membership type
+            st.write(f"**Membership Type:** {selected_profile['Membership']}")
+
+            # Display the sub_type
+            st.write(f"**Sub Type:** {selected_profile['Sub_Type']}")
+
+            st.write(f"**Email:** {selected_profile['Email']}")
+
+            # Additional Markdown sections for selected user's emails
+            st.markdown(f"**Guest Email One:** {selected_profile['Guest_Email_One']}")
+            st.markdown(f"**Guest Email Two:** {selected_profile['Guest_Email_Two']}")
+
+            selected_start_date = selected_profile['Start_Date']
+            selected_sub_type = selected_profile['Sub_Type']
+            
+            if not pd.isna(selected_start_date):
+                    st.subheader("Renewal Date:")
+                    st.markdown(
+                        f"<p style='color:red;text-align:center;font-size:24px;'>🔥 {calculate_renewal_date(selected_start_date, selected_profile['Membership'], selected_sub_type, selected_profile['Renewal'])} 🔥</p>",
+                        unsafe_allow_html=True)
+
+                # Display the user's start date as text
+            if not pd.isna(selected_start_date):
+                    st.subheader("Start Date:")
+                    st.text(format_date(selected_start_date))
+
+
+            # Wrap the user data editing section inside an expander
+            with st.expander("User Notes"):
+        
+                # Allow users to view and edit notes for this profile
+                notes_key = f"{selected_username}_notes"
+                notes = st.text_area(f"Notes for {selected_username}",
+                                     st.session_state.user_notes.get(notes_key, selected_profile['Notes']))
+
+                # Update the session state with the user's notes
+                st.session_state.user_notes[notes_key] = notes
+
+
+    elif choice == "Buttons":
+        # Create a Button for Elite Directions to Schedule
+        if st.button("WIN Reality Scheduling"):
+            instructions = """
+            
+https://dashboard.winreality.com/app/win-elite/schedule
+            
+Directions to schedule your next WIN Elite Session
+            1. Visit the WIN Dashboard and login to your account.
+            2. Select your specific WIN profile you want to schedule sessions with in the top right.
+            3. Navigate to the “Elite Coaches Sessions” under the WIN Elite section of your dashboard.
+            4. Here you can see what session you are on, how many sessions you have left before your renewal date, and when your next session is.
+            5. Schedule by clicking “Schedule Elite Session”, finding a time that works with you, and then clicking ‘confirm’.
+            6. You can only schedule one session at a time.
+            7. If you need to reschedule, click cancel and repeat steps 2-5.
+            8. You can always schedule, cancel or reschedule by reaching out to me!
+           
+ Let me know if you have any difficulties running through this, and I’ll be happy to assist.
+            """
+            pyperclip.copy(instructions)
+            st.success("Instructions copied to clipboard!")
+
+        if st.button("GBB Hitting Lesson Link"):
+            link = """
+https://calendly.com/austin-mcnicholas/win-reality-gbb-hitting-lesson 
+            """
+            pyperclip.copy(link)
+            st.success("Link Has Been Copied")
+
+        if st.button("Slow and Early Load"):
+            load = """
+https://www.youtube.com/watch?v=NFjoMkBFrB0 
+            """
+            pyperclip.copy(load)
+            st.success("Link Has Been Copied")
+
+        if st.button("Personal Survey"):
+            personal_survey = """
+https://docs.google.com/forms/d/e/1FAIpQLSf-ARh2xeArN2CiWgCcxg23PWfnOp7X4jo7aWYReANTT9HpBw/viewform 
+            """
+            pyperclip.copy(personal_survey)
+            st.success("Survey Has Been Copied")
+
+        if st.button("GBB Survey"):
+            gbb_survey = """
+https://docs.google.com/forms/d/e/1FAIpQLSfMyUE9U1VQuNI9DJ359yLJ91QTq8u5Zzhz4OhYtjTGBti-bQ/viewform?usp=sf_link 
+            """
+            pyperclip.copy(gbb_survey)
+            st.success("Survey Has Been Copied")
+
+        if st.button("Palm Up"):
+            palm = """
+https://www.youtube.com/shorts/PHtXbYYqOJ0
+            """
+            pyperclip.copy(palm)
+            st.success("Palm Up Video Has Been Copied")
+
+        if st.button("GBB Reminder Text"):
+            text = """
+            Hey its Coach Austin from WIN Reality, just checking in... wanted to let you know the membership that you have chosen also includes 1 on 1 coaching with me! Below is the link to my calendar, if you have any questions shoot me an email or text! 
+
+https://calendly.com/austin-mcnicholas/win-reality-gbb-hitting-lesson
+
+- Coach Austin
+Former Professional Baseball Player, University of Texas
+            """
+            pyperclip.copy(text)
+            st.success("Copied Text")
+
+
+        if st.button("GBB Reminder Next Session Text"):
+            next_session = """
+
+Hey its Coach Austin from WIN Reality, just checking in... wanted to let you know we still have to set up your next session, let me know if you have any questions! 
+
+https://calendly.com/austin-mcnicholas/win-reality-gbb-hitting-lesson
+
+- Coach Austin
+Former Professional Baseball Player, University of Texas
+            """
+
+            pyperclip.copy(next_session)
+            st.success("Copied Next Session Text")
+
+
+        if st.button("Softball Slow and Early"):
+            softball = """
+https://www.youtube.com/shorts/JiGaEEKZgbE
+            """
+            pyperclip.copy(softball)
+            st.success("Copied Softball Timing")
+
+        if st.button("Elite Link"):
+            Elite = """
+https://calendly.com/austin-mcnicholas/win-reality-hitting-lesson-clone
+            """
+
+            pyperclip.copy(Elite)
+            st.success("Copied Calendly Elite")
 
 
     else:
