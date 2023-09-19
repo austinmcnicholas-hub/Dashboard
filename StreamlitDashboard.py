@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import altair as alt
 import pyperclip
 from datetime import datetime
 
@@ -152,13 +151,6 @@ def roster_search(df):
             # Save the updated DataFrame to the Excel file
             df.to_excel('Elite.xlsx', sheet_name='Coach Austin', index=False, engine='openpyxl')
 
-def create_membership_bar_chart(df):
-    # Count the number of active members for each membership type
-    active_membership_counts = df[df['Active'] == 'Yes']['Membership'].value_counts().reset_index()
-    active_membership_counts.columns = ['Membership Type', 'Number of Members']
-
-    return active_membership_counts
-
 def main():
     selected_username = None #Initialize selected_username
 
@@ -229,21 +221,6 @@ def main():
 
 
         st.markdown("---")
-
-        membership_data = create_membership_bar_chart(df_selection)
-
-        # Create a bar chart using Altair
-        chart = alt.Chart(membership_data).mark_bar().encode(
-            x=alt.X('Membership Type:N', title='Membership Type'),
-            y=alt.Y('Number of Members:Q', title='Number of Members'),
-            color=alt.Color('Membership Type:N', legend=None)  # Assigns colors to each bar
-        ).properties(
-            width=600,
-            height=400
-        )
-
-        # Display the chart using Streamlit
-        st.altair_chart(chart)
 
     elif choice == "Roster Search":
         st.subheader("Roster Search")
