@@ -1,3 +1,5 @@
+The Streamlit web application addresses a critical issue: the absence of an in-house software solution to effectively monitor client lifecycle and Account Executive book data.
+
 This code effectively creates an intuitive and user-friendly dashboard for users to manage customer data, with a focus on membership, renewal, and revenue information. It accomplishes this by utilizing several Python libraries, including Streamlit for web app development, Pandas for data manipulation, Altair for data visualization, Pyperclip for clipboard operations, and the datetime module for handling date-related tasks.
 
 To populate the dashboard with relevant data, the script loads information from an Excel file named '' into a Pandas DataFrame called 'df.' This data is extracted from the 'User' sheet, with the first 127 rows being imported.
